@@ -13,20 +13,20 @@
             <h2>Connexion</h2>  
         <h:panelGrid columns="2" cellpadding="10">  
  
-			<h:form>  
+			<h:form >  
 
-                <p:panel header="Enregistrement">  
+                <p:panel header="Connexion" >  
 
-                    <h:panelGrid columns="3" cellpadding="5">  
-                        <h:outputText value="Pseudo : *" />  
+                    <h:panelGrid columns="3" cellpadding="5" >  
+                        <h:outputText value="Login : *" />  
                                     
-                        <h:inputText id="pseudo" value="#{utilisateurM.selectedUtilisateur.identifiant}" >
+                        <h:inputText id="pseudo" value="#{utilisateurM.selectedUtilisateur.login}" >
                         <f:ajax event="blur" render="pseudoMessage" />
                         </h:inputText>
                         <h:message id="pseudoMessage" for="pseudo" errorClass="erreur" />
 
                         <h:outputText value="Mot de Passe: *" />  
-                        <p:password id="feedback" value="#{utilisateurM.selectedUtilisateur.mdp}" />  
+                        <p:password id="feedback" value="#{utilisateurM.selectedUtilisateur.motDePasse}" />  
                     </h:panelGrid>  
 
                 </p:panel>  

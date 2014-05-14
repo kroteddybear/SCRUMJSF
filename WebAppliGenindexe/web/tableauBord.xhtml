@@ -7,13 +7,15 @@
       xmlns:p="http://primefaces.org/ui">
 
     <!-- appelle le template layoutbis.xhtml -->
-    <ui:composition template="newTemplate.xhtml"> 
+    <ui:composition template="newTemplate_1.xhtml"> 
         <!-- Defini la partie nommée contenu dans le template par le bloc qui suit -->
         <ui:define name="content"> 
-            <h2>Bienvenue</h2> 
+            <h:form>
+                <h2>Espace personnel de  #{utilisateurM.selectedUtilisateur.lastName} #{utilisateurM.selectedUtilisateur.firstName}</h2> 
            
-            Bienvenue dans ProGestion !
+            Bienvenue sur votre compte Genindex !
 
+            </h:form>
             <!-- Fin du bloc "contenu" -->
         </ui:define> 
         <!-- Fin du template "layout" -->
