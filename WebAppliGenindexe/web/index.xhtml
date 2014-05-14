@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- appelle le template layoutbis.xhtml -->
+    <ui:composition template="newTemplate_1.xhtml"> 
+        <!-- Defini la partie nommée contenu dans le template par le bloc qui suit -->
+        <ui:define name="content"> 
+            <h2>Connexion</h2>  
+        <h:panelGrid columns="2" cellpadding="10">  
+ 
+			<h:form>  
+
+                <p:panel header="Enregistrement">  
+
+                    <h:panelGrid columns="3" cellpadding="5">  
+                        <h:outputText value="Pseudo : *" />  
+                                    
+                        <h:inputText id="pseudo" value="#{utilisateurM.selectedUtilisateur.identifiant}" >
+                        <f:ajax event="blur" render="pseudoMessage" />
+                        </h:inputText>
+                        <h:message id="pseudoMessage" for="pseudo" errorClass="erreur" />
+
+                        <h:outputText value="Mot de Passe: *" />  
+                        <p:password id="feedback" value="#{utilisateurM.selectedUtilisateur.mdp}" />  
+                    </h:panelGrid>  
+
+                </p:panel>  
+
+                <!-- Envoie le formulaire et passe a la page test2.xhtml -->
+                <p:commandButton value="Login" action="#{utilisateurM.connexion()}"/>  
+
+            </h:form>
+			
+        </h:panelGrid>  
+            
+            <!-- Fin du bloc "contenu" -->
+        </ui:define> 
+        <!-- Fin du template "layout" -->
+    </ui:composition> 
+</html>
