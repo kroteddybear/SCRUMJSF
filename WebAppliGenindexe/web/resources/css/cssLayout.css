@@ -1,0 +1,98 @@
+#top {
+	clear: both;
+	width: 860px;
+	height: 52px;
+	margin: 0 auto;
+	background: url(/resources/images/img02.jpg) no-repeat left top;
+}
+
+#logo {
+	width: 820px;
+	height: 60px;
+	margin: 0 auto;
+        background: #242424;
+}
+
+
+
+#logo h1, #logo h2 {
+	float: left;
+	margin: 0;
+	padding: 0 0 0 20px;
+	line-height: normal;
+}
+
+#logo h1 { 
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size:36px;
+	font-style: italic;
+}
+
+#logo h1 a {
+	text-decoration: none;
+	 color: grey;
+}
+
+#logo h1 a:hover { text-decoration: underline; }
+
+#logo h2 {
+	padding: 20px 0 0 5px;
+	font: italic 13px Georgia, "Times New Roman", Times, serif;
+	color: #48ACDE;
+}
+
+#logo p a {
+	text-decoration: none;
+	color: #B6ACA2;
+}
+
+#logo p a:hover { text-decoration: underline; }
+
+/* Footer */
+#footer-wrap {
+	width: 860px;
+	height: 64px;
+	margin: 0 auto;
+}
+
+#footer {
+	margin: 0 auto;
+	height: 64px;
+	min-height: 64px;
+	padding: 0;
+	font-size: 10px;
+        color: #BBBBBB;
+}
+
+html>body #footer {
+	height: auto;
+}
+
+#footer p {
+}
+
+#legal {
+	clear: both;
+	padding-top: 10px;
+	padding-left: 30px;
+	text-align: center;
+	color: #999999;
+}
+
+#legal a {
+}
+
+.center_content {
+    position: relative;
+    background-color: #dddddd;
+}
+
+.left_content {
+    background-color: #dddddd;
+}
+
+.right_content {
+    background-color: #dddddd;
+}
+
+
