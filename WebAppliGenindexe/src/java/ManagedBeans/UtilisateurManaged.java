@@ -66,13 +66,14 @@ public class UtilisateurManaged {
             throw new SQLException("Can't get database connection");
         }
         PreparedStatement ps2;
-        ps2 = con.prepareStatement("SELECT NOM_CLIENT, PRENOM_CLIENT FROM Client NATURAL JOIN Connexion WHERE LOGIN='" + this.selectedUtilisateur.getLogin() + "'");
+        ps2 = con.prepareStatement("SELECT NOM_CLIENT, PRENOM_CLIENT, ID_CLIENT FROM Client NATURAL JOIN Connexion WHERE LOGIN='" + this.selectedUtilisateur.getLogin() + "'");
         //get customer data from database
         ResultSet result2 = ps2.executeQuery();
         while (result2.next()) {
             System.out.println(result2.getString("NOM_CLIENT"));
             System.out.println(result2.getString("PRENOM_CLIENT"));
         this.selectedUtilisateur.setName((result2.getString("NOM_CLIENT")), (result2.getString("PRENOM_CLIENT")));
+        this.selectedUtilisateur.setID(result2.getInt("ID_CLIENT"));
         }
         }
         catch (SQLException ex) {

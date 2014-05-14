@@ -3,17 +3,19 @@ package ManagedBeans;
 import Tools.ConnectBDD;
 import beans.Customers;
 import beans.Orders;
-import beans.Samples;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import static java.util.Collections.list;
-import java.util.Date;
 import java.util.List;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 
+
+@ManagedBean(name = "orderM")
+@SessionScoped
 /**
  *
  * @author Teddy
@@ -25,6 +27,7 @@ public class ManagedOrder {
     private ManagedSample myManagedSample;
 
     public ManagedOrder() {
+        lOrdersNotF = new ArrayList<>();
         lOrdersNotF = getListOrderNotFinished();
     }
 
@@ -90,31 +93,134 @@ public class ManagedOrder {
      * This function permits to list all the orders in the database.
      */
     public List<Orders> getListOrderNotFinished() {
+        System.out.println("getListOrderNotFinished debug : ");
         ConnectBDD b = new ConnectBDD();
         Connection con = b.getMyConnexion();
         List<Orders> list = new ArrayList<Orders>();
+        System.out.println("getListOrderNotFinished debug liste vide : ");
         try {
             if (con == null) {
                 throw new SQLException("Can't get database connection");
             }
             PreparedStatement ps;
-            ps = con.prepareStatement("select ID_COMMANDE, DATE_COMMANDE from COMMANDE natural join ECHANTILLON natural join TUBE natural join ANALYSE where RES_FINAL is NULL group by ID_COMMANDE; ");
+            System.out.println("getListOrderNotFinished ps ok : ");
+            ps = con.prepareStatement("select ID_COMMANDE from COMMANDE natural join ECHANTILLON natural join TUBE natural join ANALYSE where RES_FINAL is NULL group by ID_COMMANDE ");
             ResultSet result = ps.executeQuery();
+            System.out.println("before while : ");
             while (result.next()) {
+                System.out.println("While : "+ result.getInt("ID_COMMANDE"));
                 Orders pOrder = new Orders();
                 pOrder.setIdOrder(result.getInt("ID_COMMANDE"));
-                pOrder.setDateOrder(result.getDate("ID_COMMANDE"));
-                list.add(this.selectedOrder);
+//                pOrder.setDateOrder(result.getDate("DATE_COMMANDE"));
+                list.add(pOrder);
             }
         }
         catch (SQLException ex) {
-            System.out.println("ma requete");
-            System.out.println("SQLException checkAnimal " + ex.getMessage());
-            System.out.println("SQLState checkAnimal: " + ex.getSQLState());
-            System.out.println("VendorError checkAnimal: " + ex.getErrorCode());
+            System.out.println("select ID_COMMANDE, DATE_COMMANDE from COMMANDE natural join ECHANTILLON natural join TUBE natural join ANALYSE where RES_FINAL is NULL group by ID_COMMANDE");
+            System.out.println("SQLException getListOrderNotFinished " + ex.getMessage());
+            System.out.println("SQLState getListOrderNotFinished: " + ex.getSQLState());
+            System.out.println("VendorError getListOrderNotFinished: " + ex.getErrorCode());
         }
         b.close();
         return (list);
+    }
+    
+     /**
+     * This function permits to list all the orders in the database.
+     */
+    public List<Orders> getListOrderNotFinished(Customers client) {
+        System.out.println("getListOrderNotFinished debug : ");
+        ConnectBDD b = new ConnectBDD();
+        Connection con = b.getMyConnexion();
+        List<Orders> list = new ArrayList<Orders>();
+        System.out.println("getListOrderNotFinished debug liste vide : ");
+        try {
+            if (con == null) {
+                throw new SQLException("Can't get database connection");
+            }
+            PreparedStatement ps;
+            System.out.println("getListOrderNotFinished ps ok : ");
+            ps = con.prepareStatement("select ID_COMMANDE from COMMANDE natural join ECHANTILLON natural join TUBE natural join ANALYSE natural join ANIMAL natural join CLIENT where ID_CLIENT = " + client.getID() + " and RES_FINAL is NULL group by ID_COMMANDE ");
+            ResultSet result = ps.executeQuery();
+            System.out.println("before while : ");
+            while (result.next()) {
+                System.out.println("While : "+ result.getInt("ID_COMMANDE"));
+                Orders pOrder = new Orders();
+                pOrder.setIdOrder(result.getInt("ID_COMMANDE"));
+                try {
+                    int idCommande = pOrder.getId();
+                    if (con == null) {
+                        throw new SQLException("Can't get database connection");
+                    }
+                    PreparedStatement ps2;
+                    ps2 = con.prepareStatement("select count(*) as nbEch from ECHANTILLON where ID_COMMANDE = " + idCommande + "");
+                    ResultSet result2 = ps2.executeQuery();
+                    while (result2.next()) {
+                        pOrder.setNumberSamples(result2.getInt("nbEch"));
+                    }
+                } catch (SQLException ex) {
+                    System.out.println("");
+                    System.out.println("SQLException getListOrderNotFinished " + ex.getMessage());
+                    System.out.println("SQLState getListOrderNotFinished: " + ex.getSQLState());
+                    System.out.println("VendorError getListOrderNotFinished: " + ex.getErrorCode());
+                }
+                list.add(pOrder);
+            }
+        }
+        catch (SQLException ex) {
+            System.out.println("select ID_COMMANDE from COMMANDE natural join ECHANTILLON natural join TUBE natural join ANALYSE natural join ANIMAL natural join CLIENT where ID_CLIENT = " + client.getID() + " and RES_FINAL is NULL group by ID_COMMANDE");
+            System.out.println("SQLException getListOrderNotFinished " + ex.getMessage());
+            System.out.println("SQLState getListOrderNotFinished: " + ex.getSQLState());
+            System.out.println("VendorError getListOrderNotFinished: " + ex.getErrorCode());
+        }
+        b.close();
+        return (list);
+    }
+    
+    public int getNbEchTermine(Orders pOrder){
+        ConnectBDD b = new ConnectBDD();
+        Connection con = b.getMyConnexion();
+        int res = 0;
+        try {
+                    if (con == null) {
+                        throw new SQLException("Can't get database connection");
+                    }
+                    PreparedStatement ps2;
+                    ps2 = con.prepareStatement("select count(ID_ECH) as nbEch from ECHANTILLON where ID_COMMANDE = " + pOrder.getId() + " and ID_ECH not in (select distinct ID_ECH as nbEch from ECHANTILLON natural join TUBE natural join ANALYSE where ID_COMMANDE = " + pOrder.getId() + " and RES_FINAL is NULL)");
+                    ResultSet result2 = ps2.executeQuery();
+                    while (result2.next()) {
+                        res = (result2.getInt("nbEch"));
+                    }
+                } catch (SQLException ex) {
+                    System.out.println("select count(ID_COMMANDE) as nbEch from ECHANTILLON natural join TUBE natural join ANALYSE where ID_COMMANDE = " + pOrder.getId() + " and RES_FINAL is NULL group by ID_COMMANDE");
+                    System.out.println("SQLException getListOrderNotFinished " + ex.getMessage());
+                    System.out.println("SQLState getListOrderNotFinished: " + ex.getSQLState());
+                    System.out.println("VendorError getListOrderNotFinished: " + ex.getErrorCode());
+                }
+        return res;
+    }
+    
+    public int getNbEchPasTermine(Orders pOrder){
+        ConnectBDD b = new ConnectBDD();
+        Connection con = b.getMyConnexion();
+        int res = 0;
+        try {
+                    if (con == null) {
+                        throw new SQLException("Can't get database connection");
+                    }
+                    PreparedStatement ps2;
+                    ps2 = con.prepareStatement("select count (distinct ID_ECH) as nbEch from ECHANTILLON natural join TUBE natural join ANALYSE where ID_COMMANDE = " + pOrder.getId() + " and RES_FINAL is NULL");
+                    ResultSet result2 = ps2.executeQuery();
+                    while (result2.next()) {
+                        res = (result2.getInt("nbEch"));
+                    }
+                } catch (SQLException ex) {
+                    System.out.println("select count(ID_COMMANDE) as nbEch from ECHANTILLON natural join TUBE natural join ANALYSE where ID_COMMANDE = " + pOrder.getId() + " and RES_FINAL is NULL group by ID_COMMANDE");
+                    System.out.println("SQLException getListOrderNotFinished " + ex.getMessage());
+                    System.out.println("SQLState getListOrderNotFinished: " + ex.getSQLState());
+                    System.out.println("VendorError getListOrderNotFinished: " + ex.getErrorCode());
+                }
+        return res;
     }
     
     /**

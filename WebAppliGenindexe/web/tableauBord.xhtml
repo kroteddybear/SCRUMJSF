@@ -17,46 +17,45 @@
                 <p:panel>Bienvenue sur votre compte Genindex !</p:panel>
             
 <h:form id="form">
- 
+ <p:panel>
     <h3>Mes commandes en cours</h3>
-    <p:ring id="basic" value="#{ManagedBeans.ManagedOrder.}" var="orders">
+    <p:ring id="basic" value="#{orderM.getListOrderNotFinished(utilisateurM.selectedUtilisateur)}" var="orders">
         <p:outputPanel style="text-align:center;" layout="block">
-            #{orders.idOrder}
+            Commande : #{orders.idOrder}
             <p:commandButton update=":form:detail"
                         icon="ui-icon-search"
                         title="View" oncomplete="PF('dlg').show()">
                 <f:setPropertyActionListener value="#{orders}"
-                    target="#{ManagedOrder.selectedOrder}" />
+                                             target="#{orderM.selectedOrder}" />
             </p:commandButton>
         </p:outputPanel>
     </p:ring>
  
-    <p:dialog id="dialog" widgetVar="dlg" showEffect="fade" hideEffect="fade" modal="true" width="125">
+    <p:dialog id="dialog" widgetVar="dlg" showEffect="fade" hideEffect="fade" modal="true" width="250">
  
         <p:outputPanel id="detail" style="text-align:center;" layout="block">
  
-            <h:panelGrid  columns="2" cellpadding="5" rendered="#{not empty ringBean.selectedPlayer}">
+            <h:panelGrid  columns="2" cellpadding="5" rendered="#{not empty orderM.selectedOrder}">
                 <f:facet name="header">
-                    <p:graphicImage
-                            value="/images/barca/#{ringBean.selectedPlayer.photo}"
-                            width="40" height="50"/>
+                    <p:outputLabel>Commande : #{orderM.selectedOrder.idOrder}</p:outputLabel>
                 </f:facet>
  
-                <h:outputText value="Name: " />
+                <h:outputText value="Nombre d'échantillons totaux : " />
                 <h:outputText id="modelNo"
-                            value="#{ringBean.selectedPlayer.name}" />
+                              value="#{orderM.selectedOrder.numberSamples}" />
  
-                <h:outputText value="Number " />
-                <h:outputText id="year"
-                            value="#{ringBean.selectedPlayer.number}" />
+                <h:outputText value="Nombre d'échantillons analysés : " />
+                <h:outputText value="#{orderM.getNbEchTermine(orderM.selectedOrder)}"/>
+                
+                <h:outputText value="Nombre d'échantillons restant à analyser : " />
+                <h:outputText value="#{orderM.getNbEchPasTermine(orderM.selectedOrder)}" />
  
-                <h:outputText value="Position " />
-                <h:outputText value="#{ringBean.selectedPlayer.position}"/>
+                
             </h:panelGrid>
         </p:outputPanel>
  
     </p:dialog>
- 
+ </p:panel>
 </h:form>
             <!-- Fin du bloc "contenu" -->
         </ui:define> 
