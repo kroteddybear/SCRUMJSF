@@ -90,4 +90,9 @@ public class UtilisateurManaged {
         
     }
 
+    public String deconnexion() throws SQLException {
+        this.selectedUtilisateur = new Customers();
+            return "index";
+    }
+    
 }

@@ -20,14 +20,32 @@ import java.util.List;
  */
 public class ManagedOrder {
 
+    private List<Orders> lOrdersNotF;
     private Orders selectedOrder;
     private ManagedSample myManagedSample;
 
     public ManagedOrder() {
+        lOrdersNotF = getListOrderNotFinished();
     }
 
     public ManagedOrder(Orders selectedOrder) {
         this.selectedOrder = selectedOrder;
+    }
+
+    public List<Orders> getlOrdersNotF() {
+        return lOrdersNotF;
+    }
+
+    public void setlOrdersNotF(List<Orders> lOrdersNotF) {
+        this.lOrdersNotF = lOrdersNotF;
+    }
+
+    public ManagedSample getMyManagedSample() {
+        return myManagedSample;
+    }
+
+    public void setMyManagedSample(ManagedSample myManagedSample) {
+        this.myManagedSample = myManagedSample;
     }
 
     public Orders getSelectedOrder() {
@@ -68,6 +86,37 @@ public class ManagedOrder {
         return (list);
     }
 
+    /**
+     * This function permits to list all the orders in the database.
+     */
+    public List<Orders> getListOrderNotFinished() {
+        ConnectBDD b = new ConnectBDD();
+        Connection con = b.getMyConnexion();
+        List<Orders> list = new ArrayList<Orders>();
+        try {
+            if (con == null) {
+                throw new SQLException("Can't get database connection");
+            }
+            PreparedStatement ps;
+            ps = con.prepareStatement("select ID_COMMANDE, DATE_COMMANDE from COMMANDE natural join ECHANTILLON natural join TUBE natural join ANALYSE where RES_FINAL is NULL group by ID_COMMANDE; ");
+            ResultSet result = ps.executeQuery();
+            while (result.next()) {
+                Orders pOrder = new Orders();
+                pOrder.setIdOrder(result.getInt("ID_COMMANDE"));
+                pOrder.setDateOrder(result.getDate("ID_COMMANDE"));
+                list.add(this.selectedOrder);
+            }
+        }
+        catch (SQLException ex) {
+            System.out.println("ma requete");
+            System.out.println("SQLException checkAnimal " + ex.getMessage());
+            System.out.println("SQLState checkAnimal: " + ex.getSQLState());
+            System.out.println("VendorError checkAnimal: " + ex.getErrorCode());
+        }
+        b.close();
+        return (list);
+    }
+    
     /**
      * This function permits to search the order in the database that have the
      * customer in parameter.
@@ -191,5 +240,16 @@ public class ManagedOrder {
          SimpleDateFormat formatDateJour = new SimpleDateFormat("dd/MM/yy"); 
         String dateFormatee = formatDateJour.format(datejava); 
         return dateFormatee;
+    }
+    
+    public java.util.Date dateSQLToJava(java.sql.Date dateSQL){
+      
+        int dd = dateSQL.getDate();
+        int mm = (dateSQL.getMonth())+1;
+        int aaaa = dateSQL.getYear();
+
+        java.util.Date da = new java.util.Date(dd,mm,aaaa);
+
+        return da;
     }
 }
